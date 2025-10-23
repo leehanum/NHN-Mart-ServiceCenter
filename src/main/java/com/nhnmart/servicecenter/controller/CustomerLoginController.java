@@ -62,4 +62,19 @@ public class CustomerLoginController {
         throw new LoginFailException();
 //        return "redirect:/cs/login";
     }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        HttpSession session = request.getSession(false);
+
+        session.invalidate();
+        Cookie cookie = new Cookie("MYSESSION", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/cs/login";
+
+
+    }
 }
