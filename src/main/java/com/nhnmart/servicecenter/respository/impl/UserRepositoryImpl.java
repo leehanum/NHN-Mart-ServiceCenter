@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean exists(String id) {
-        return false;
+        return userMap.containsKey(id);
     }
 
     @Override

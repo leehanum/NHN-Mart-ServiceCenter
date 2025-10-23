@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>에러 페이지</title>
+    <title>시스템 에러</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .error-container { border: 1px solid #ff0000; padding: 20px; background-color: #ffeaea; border-radius: 5px; }
+        .error-message { font-size: 1.2em; font-weight: bold; color: #cc0000; margin-bottom: 15px; }
+        .error-details { margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; }
+        .stack-trace { white-space: pre-wrap; background-color: #f7f7f7; padding: 10px; border: 1px solid #ddd; }
+    </style>
 </head>
 <body>
-Error:
+
+<div class="error-container">
+    <h1>시스템 오류 발생</h1>
+
+    <div class="error-message" th:if="${exception?.message}">
+        <p>요청 처리 중 문제가 발생했습니다.</p>
+        <p>오류 내용: <span th:text="${exception.message}">[예외 메시지]</span></p>
+    </div>
+    <hr>
+
+    <div class="error-details">
+        <h2>오류 상세 정보 (개발 환경 전용)</h2>
+        <p><strong>예외 타입:</strong> <span th:text="${exception}">[예외 클래스]</span></p>
+
+    </div>
+
+    <hr>
+    <p><a href="/">메인 페이지로 돌아가기</a></p>
+</div>
+
 </body>
 </html>

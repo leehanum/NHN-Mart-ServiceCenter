@@ -13,12 +13,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
 
-        if(Objects.isNull(session) || Objects.isNull(session.getAttribute("studentId"))){
+        if(Objects.isNull(session) || Objects.isNull(session.getAttribute("userId"))){
             response.sendRedirect("/cs/login");
             return false;
         }
-        String studentId =  (String)session.getAttribute("studentId");
-        System.out.println(studentId);
+        String userId =  (String)session.getAttribute("userId");
+        System.out.println(userId);
 
 
         return true;
