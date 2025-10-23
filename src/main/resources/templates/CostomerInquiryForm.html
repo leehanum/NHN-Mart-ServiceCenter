@@ -1,13 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>고객 문의하기 폼</title>
+    <title>고객 문의하기</title>
 </head>
 <body>
-고객 문의하기 창
-<form method = "post" action="/cs/logout">
+
+<h1>NHN Mart 고객 문의하기</h1>
+<hr>
+
+<!-- 로그아웃 버튼 -->
+<form method="post" action="/cs/logout" style="display: inline-block; float: right;">
     <button type="submit">로그아웃</button>
+</form>
+
+<form method="post" action="/cs/inquiry" enctype="multipart/form-data">
+
+    <fieldset>
+        <legend>문의 정보 입력</legend>
+
+        <!-- 분류 -->
+        <p>
+            <label for="category">분류:</label>
+            <select id="category" name="category" required>
+                <option value="COMPLAINT">불만 접수</option>
+                <option value="SUGGESTION">제안</option>
+                <option value="REFUND_EXCHANGE">환불/교환</option>
+                <option value="PRAISE">칭찬해요</option>
+                <option value="OTHER">기타 문의</option>
+            </select>
+            <span style="color: red;" th:if="${errors?.category}" th:text="${errors.category}">[분류 오류 메시지]</span>
+        </p>
+
+        <!-- 제목 -->
+        <p>
+            <label for="title">제목 (2~200자):</label>
+            <input type="text" id="title" name="title" th:value="${inquiry?.title}" required maxlength="200" size="50">
+            <span style="color: red;" th:if="${errors?.title}" th:text="${errors.title}">[제목 오류 메시지]</span>
+        </p>
+
+        <!-- 본문 -->
+        <p>
+            <label for="content">본문 (0~40,000자):</label><br>
+            <textarea id="content" name="content" th:text="${inquiry?.content}" maxlength="40000" rows="10" cols="70"></textarea>
+            <span style="color: red;" th:if="${errors?.content}" th:text="${errors.content}">[본문 오류 메시지]</span>
+        </p>
+
+        <!-- 첨부파일 -->
+        <p>
+            <label for="attachments">첨부파일 (이미지):</label>
+            <input type="file" id="attachments" name="attachments" accept="image/gif, image/jpeg, image/png, image/jpg" multiple>
+            <br><small style="color: gray;">(N개 업로드 가능, gif, jpg, jpeg, png 형식만)</small>
+            <span style="color: red;" th:if="${errors?.attachments}" th:text="${errors.attachments}">[첨부파일 오류 메시지]</span>
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <!-- 버튼 그룹 -->
+    <div>
+        <button type="submit">[확인] 문의하기</button>
+        <!-- [취소] 버튼: 메인(내 문의 목록) 페이지로 이동 -->
+        <button type="button" onclick="location.href='/cs';">[취소]</button>
+    </div>
 </form>
 
 </body>

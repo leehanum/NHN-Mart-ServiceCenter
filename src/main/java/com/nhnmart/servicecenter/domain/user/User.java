@@ -1,4 +1,4 @@
-package com.nhnmart.servicecenter.domain;
+package com.nhnmart.servicecenter.domain.user;
 
 import lombok.Getter;
 import lombok.Setter;

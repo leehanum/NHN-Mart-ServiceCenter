@@ -1,4 +1,4 @@
-package com.nhnmart.servicecenter.domain;
+package com.nhnmart.servicecenter.domain.user;
 
 public enum UserType {
     CUSTOMER,

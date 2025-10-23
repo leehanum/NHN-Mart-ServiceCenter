@@ -36,7 +36,7 @@ public class CustomerLoginController {
 
             if(Objects.nonNull(userId) && userRepository.exists(userId)){ // session으로 가져온 회원 정보 검증
                 model.addAttribute("user", userRepository.getUser(userId));
-                return "redirect:/cs/inquiry";
+                return "redirect:/cs";
             }
         }
 
@@ -57,7 +57,7 @@ public class CustomerLoginController {
             Cookie cookie = new Cookie("MYSESSION",session.getId()); // cookie("MYSESSION","abcde1234kljfasdkf") -> 브라우저에 저장
             response.addCookie(cookie);
 
-            return "redirect:/cs/inquiry";
+            return "redirect:/cs";
         }
         throw new LoginFailException();
 //        return "redirect:/cs/login";
