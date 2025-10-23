@@ -83,7 +83,7 @@ public class InquiryController {
     public String customerInquiry(@RequestParam("attachments") List<MultipartFile> files,
                                   @Valid @ModelAttribute InquiryForm form, BindingResult bindingResult,
                                   Model model, HttpServletRequest request) throws IOException {
-        // Validtion을 적용하기 위해 InquiryForm으로 임시로 요청을 받아 @ModelAttribute해서 객체로 받음!
+        // Validation을 적용하기 위해 InquiryForm으로 임시로 요청을 받아 @ModelAttribute해서 객체로 받음!
         if(bindingResult.hasErrors()){
             throw new ValidationFailedException(bindingResult);
         }
