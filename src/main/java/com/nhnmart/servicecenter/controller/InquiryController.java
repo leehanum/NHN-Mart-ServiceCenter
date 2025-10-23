@@ -2,15 +2,19 @@ package com.nhnmart.servicecenter.controller;
 
 import com.nhnmart.servicecenter.domain.inquiry.Inquiry;
 import com.nhnmart.servicecenter.domain.inquiry.InquiryCategory;
+import com.nhnmart.servicecenter.domain.inquiry.InquiryForm;
 import com.nhnmart.servicecenter.domain.user.User;
+import com.nhnmart.servicecenter.exception.ValidationFailedException;
 import com.nhnmart.servicecenter.respository.InquiryRepository;
 import com.nhnmart.servicecenter.respository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,12 +80,20 @@ public class InquiryController {
     }
 
     @PostMapping("/inquiry")
-    public String customerInquiry(@RequestParam("attachments") List<MultipartFile> files, Model model,
-                                  @RequestParam("title") String title, @RequestParam("content") String content,
-                                  @RequestParam(name = "category",required = false) InquiryCategory categoryName,
-                                  HttpServletRequest request) throws IOException {
+    public String customerInquiry(@RequestParam("attachments") List<MultipartFile> files,
+                                  @Valid @ModelAttribute InquiryForm form, BindingResult bindingResult,
+                                  Model model, HttpServletRequest request) throws IOException {
+        // Validtion을 적용하기 위해 InquiryForm으로 임시로 요청을 받아 @ModelAttribute해서 객체로 받음!
+        if(bindingResult.hasErrors()){
+            throw new ValidationFailedException(bindingResult);
+        }
+
         HttpSession session = request.getSession(false);
         String userId = (String) session.getAttribute("userId");
+
+        if(userId == null){
+            return "redirect:/cs/logout";
+        }
 
         List<String> filePath = new ArrayList<>(); // 서버 저장 경로(Inquiry 객체에 사용)
         List<String> uploadedFileNames = new ArrayList<>(); // 업로드된 파일 이름 (Model에 사용)
@@ -102,7 +114,7 @@ public class InquiryController {
 
         }
 
-        Inquiry inquiry = new Inquiry(title, categoryName, content, userId, filePath);
+        Inquiry inquiry = new Inquiry(form.getTitle(), form.getCategory(), form.getContent(), userId, filePath);
         inquiryRepository.save(inquiry);
 
         model.addAttribute("uploadedCount", uploadedFileNames.size()); // 업로드된 파일 개수

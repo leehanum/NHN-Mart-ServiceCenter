@@ -1,5 +1,7 @@
 package com.nhnmart.servicecenter.domain.inquiry;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +15,11 @@ public class Inquiry {
 
     // 문의 공통 정보
     private Long id; // 문의 ID (Repository에서 할당)
+
+//    @Size(min = 2, max = 200)
     private String title; // 제목 (2~200자)
     private InquiryCategory category; // 분류
+//    @Size(min = 0, max = 40000)
     private String content; // 본문 (0~40,000자)
     private String customerId; // 작성자 ID
     private LocalDateTime createdAt; // 문의 작성 일시
