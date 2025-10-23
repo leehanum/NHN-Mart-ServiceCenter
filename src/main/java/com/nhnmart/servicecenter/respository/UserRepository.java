@@ -14,4 +14,3 @@ public interface UserRepository {
     // (선택) 사용자를 저장하는 메서드
     // User save(User user);
 }
-//
