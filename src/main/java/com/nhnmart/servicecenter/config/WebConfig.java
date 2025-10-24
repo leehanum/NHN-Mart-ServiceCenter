@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -25,10 +24,5 @@ public class WebConfig implements WebMvcConfigurer {
     public MultipartResolver multipartResolver(){
         return new StandardServletMultipartResolver();
     }
-//    // upload form 설정
-//    @Override
-//    public void addViewControllers(ViewControllerRegistry registry){
-//        registry.addViewController("/upload").setViewName("upload");
-//    }
 
 }

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,7 +31,8 @@ public class InquiryController {
 
     private final InquiryRepository inquiryRepository;
     private final UserRepository userRepository;
-    private static final String UPLOAD_DIR = "/Users/leehanum/Downloads/";
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
 
     @Autowired
@@ -103,15 +105,20 @@ public class InquiryController {
             if(!file.isEmpty()){
                 // 1. 파일 저장 경로 생성
                 String originalFilename = file.getOriginalFilename();
-                String savePath = UPLOAD_DIR + file.getOriginalFilename();
+                String savePath = uploadDir + file.getOriginalFilename();
                 // 2.파일 저장
                 file.transferTo(Paths.get(savePath));
                 // 3. 정보 수집
                 filePath.add(savePath);
                 uploadedFileNames.add(originalFilename); // view에 보여줄 이름 리스트
                 totalSize += file.getSize(); // 전체 크기 합산
+
+
             }
 
+        }
+        for (String s : filePath) {
+            log.info(s);
         }
 
         Inquiry inquiry = new Inquiry(form.getTitle(), form.getCategory(), form.getContent(), userId, filePath);
@@ -121,6 +128,6 @@ public class InquiryController {
         model.addAttribute("uploadedFileNames", uploadedFileNames); // 업로드된 파일 이름 리스트
         model.addAttribute("totalSize", totalSize);
 
-        return "redirect:/cs";
+        return "redirect:/cs/inquiry/" + inquiry.getId();
     }
 }
