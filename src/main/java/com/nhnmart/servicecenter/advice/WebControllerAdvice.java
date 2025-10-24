@@ -1,6 +1,7 @@
 package com.nhnmart.servicecenter.advice;
 
 import com.nhnmart.servicecenter.exception.AdminAccessDeniedException;
+import com.nhnmart.servicecenter.exception.LoginFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -21,6 +22,13 @@ public class WebControllerAdvice {
     @ExceptionHandler(AdminAccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN) // 403
     public String handleAccessDeniedException(AdminAccessDeniedException ex, Model model){
+        model.addAttribute("exception",ex);
+        return "error";
+    }
+
+    @ExceptionHandler(LoginFailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+    public String handleLoginFailException(LoginFailException ex, Model model){
         model.addAttribute("exception",ex);
         return "error";
     }
