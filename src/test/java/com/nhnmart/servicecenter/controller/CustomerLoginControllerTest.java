@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LoginController.class)
@@ -26,6 +27,10 @@ class CustomerLoginControllerTest {
     // ⭐️ 컨트롤러가 의존하는 UserRepository 인터페이스를 Mocking합니다.
     @MockitoBean
     private UserRepository userRepository;
+
+    private final String CUSTOMER_ID = "lee";
+    private final String PASSWORD = "1234";
+    private final String ADMIN_ID = "admin";
 
     @Test // 직접 작성함.
     @DisplayName("GET /cs/login test!!")
@@ -46,21 +51,17 @@ class CustomerLoginControllerTest {
 
     @Test
     @DisplayName("1. GET /cs/login: 세션이 존재하고 유효하면 /cs로 리다이렉션")
-    void loginTest_AlreadyLoggedIn_ShouldRedirectToCs() throws Exception {
-        // Given (준비)
+    void 세션존재리다이렉션() throws Exception {
+        // given
         String userId = "lee";
 
-        // 1. Mock 세션 생성 및 로그인 정보 주입
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("userId", userId);
-
-        // 2. Controller 로직 Mocking (login 메소드 로직을 따라갑니다.)
-        //    - user.exists(userId)가 호출되면 -> true 반환
         when(userRepository.exists(userId)).thenReturn(true);
 
-        // When & Then
-        mockMvc.perform(get("/cs/login") // ⭐️ 엔드포인트 수정
-                        .session(session)) // ⭐️ 세션 주입
+        // when & then
+        mockMvc.perform(get("/cs/login")
+                        .session(session))
                 .andExpect(status().is3xxRedirection()) // 302 리다이렉션 확인
                 .andExpect(redirectedUrl("/cs")); // 고객 메인 페이지로 리다이렉션 확인
     }
@@ -73,6 +74,42 @@ class CustomerLoginControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("LoginForm"));
     }
+    @Test
+    @DisplayName("login post 요청")
+    void 포스트요청을해보아요() throws Exception {
+        //given
+        String userId = "lee";
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("userId",userId);
 
+        User customerUser = new User(CUSTOMER_ID, PASSWORD, "고객이름", UserType.CUSTOMER);
 
+        when(userRepository.matches(CUSTOMER_ID,PASSWORD)).thenReturn(true);
+        when(userRepository.exists(any())).thenReturn(true);
+        // when & then
+        mockMvc.perform(post("/cs/login")
+                .session(session)
+                .param("id",CUSTOMER_ID)
+                .param("password",PASSWORD))
+                .andExpect(status().is3xxRedirection())// 302
+                .andExpect(redirectedUrl("/cs"))
+                .andExpect(cookie().exists("MYSESSION")) // 쿠키 생성 확인
+                .andExpect(request().sessionAttribute("userId", CUSTOMER_ID)); // 세션에 ID 저장 확인
+    }
+
+    @Test
+    @DisplayName("admin 계정일 때 CsAdminInquiryList로 가는지")
+    void csAdminInquriyList테스트() throws Exception {
+        //given
+        User adminUser = new User(ADMIN_ID, PASSWORD, "관리자", UserType.CS_ADMIN);
+        when(userRepository.matches(ADMIN_ID,PASSWORD)).thenReturn(true);
+        when(userRepository.getUser(ADMIN_ID)).thenReturn(adminUser);
+        mockMvc.perform(post("/cs/login")
+                .param("id",ADMIN_ID)
+                .param("password",PASSWORD))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/cs/admin"))
+                .andExpect(request().sessionAttribute("userId",ADMIN_ID));
+
+    }
 }
