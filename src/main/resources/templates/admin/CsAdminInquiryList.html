@@ -27,7 +27,7 @@
     <tr th:each="inquiry : ${inquiries}">
         <td th:text="${inquiry.id}">1</td>
         <td th:text="${inquiry.category.description}">불만 접수</td>
-        <td><a th:href="@{|/cs/inquiry/${inquiry.id}|}" th:text="${inquiry.title}">문의 제목</a></td>
+        <td th:text="${inquiry.title}">문의 제목</a></td>
         <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}">2024-10-23 10:00</td>
         <td th:text="${inquiry.customerId}">lee</td>
         <td>

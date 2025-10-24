@@ -70,8 +70,12 @@
     <hr>
 
     <form method="post" action="/cs/admin/answer" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="inquiryId" th:value="*{id}">
         <textarea id="content" name="content" maxlength="40000" rows="10" cols="70"></textarea>
-        <button>답변하기</button>
+        <div>
+            <button type="submit">[확인] 답변하기</button>
+            <button type="button" onclick="location.href='/cs/admin';">[취소]</button>
+        </div>
     </form>
 
     <div>

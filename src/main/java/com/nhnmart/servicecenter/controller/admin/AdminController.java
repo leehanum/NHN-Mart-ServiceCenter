@@ -1,13 +1,19 @@
 package com.nhnmart.servicecenter.controller.admin;
 
 
+import com.nhnmart.servicecenter.domain.AnswerForm;
 import com.nhnmart.servicecenter.domain.inquiry.Inquiry;
+import com.nhnmart.servicecenter.exception.ValidationFailedException;
 import com.nhnmart.servicecenter.respository.InquiryRepository;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +45,30 @@ public class AdminController {
     }
 
     @PostMapping("/answer")
-    public String answer(@RequestParam("content") String content,
-                         @PathVariable("inquiryId") Long inquiryId){
+    public String answer(@Valid AnswerForm answerForm, BindingResult bindingResult,
+                         HttpSession session){
+        if(bindingResult.hasErrors()){
+            throw new ValidationFailedException(bindingResult);
+        }
+        String csAdminId = (String) session.getAttribute("userId");
+        Optional<Inquiry> optionalInquiry = inquiryRepository.findById(answerForm.getInquiryId());
 
-        return "";
+        if(optionalInquiry.isEmpty()){
+            throw new RuntimeException("해당 문의를 찾을 수 없습니다.");
+        }
+
+        Inquiry inquiry = optionalInquiry.get();
+
+        if(!inquiry.isAnswered()){
+            inquiry.setAnswerContent(answerForm.getContent());
+            inquiry.setAnswered(true);
+            inquiry.setAnsweredAt(LocalDateTime.now());
+            inquiry.setCsAdminId(csAdminId);
+
+            inquiryRepository.save(inquiry);
+        }
+
+        return "redirect:/cs/admin";
     }
 
 
