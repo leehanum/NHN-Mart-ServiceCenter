@@ -25,10 +25,7 @@ public class AdminCheckInterceptor implements HandlerInterceptor {
 
 
         if (Objects.isNull(user) || !user.isCsAdmin()) {
-            // 403 Forbidden 응답을 주거나, 권한이 없음을 알리는 페이지로 리다이렉션
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 필요합니다.");
-            // 또는 response.sendRedirect("/cs/access-denied");
-            return false;
+            throw new AdminAccessDeniedException();
         }
 
         return true;
