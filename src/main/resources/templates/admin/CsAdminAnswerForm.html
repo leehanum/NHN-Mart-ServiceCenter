@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>문의 상세 - NHN Mart 고객센터</title>
+</head>
+<body>
+
+<h1>고객 문의 답장 Form</h1>
+<hr>
+
+<div th:object="${inquiry}">
+
+    <table border="1">
+        <tr>
+            <th>문의 번호</th>
+            <td th:text="*{id}">1</td>
+            <th>작성자 ID</th>
+            <td th:text="*{customerId}">lee</td>
+        </tr>
+        <tr>
+            <th>분류</th>
+            <td th:text="*{category.description}">불만 접수</td>
+            <th>작성 일시</th>
+            <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}">2024-10-23 10:00</td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td colspan="3" th:text="*{title}">문의 제목입니다.</td>
+        </tr>
+        <tr>
+            <th>답변 여부</th>
+            <td colspan="3">
+                <span th:if="*{isAnswered}">[답변 완료]</span>
+                <span th:unless="*{isAnswered}">[답변 대기]</span>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <h2>문의 내용</h2>
+    <div th:text="*{content}" style="border: 1px solid #ccc; padding: 10px; min-height: 100px; white-space: pre-wrap;">
+        주문한 상품이 늦어집니다. 긴 문의 내용이 여기에 들어갑니다.
+    </div>
+
+    <br>
+
+    <h2>첨부 파일</h2>
+    <div th:if="${#lists.isEmpty(inquiry.attachmentFilePaths)}">
+        <p>첨부된 파일이 없습니다.</p>
+    </div>
+    <li th:each="path : *{attachmentFilePaths}">
+        <a th:href="@{/cs/inquiry/download(filePath=${path})}"
+           th:text="${path != null ? path.substring(path.lastIndexOf('/') + 1) : '파일명 없음'}">
+            filename_abc.png
+        </a>
+    </li>
+    <div th:if="*{isAnswered}">
+        <h2>📢 답변 정보</h2>
+        <p><strong>답변 담당자:</strong> <span th:text="*{csAdminId}">admin</span></p>
+        <p><strong>답변 일시:</strong> <span th:text="${#temporals.format(inquiry.answeredAt, 'yyyy-MM-dd HH:mm')}">2024-10-24 11:30</span></p>
+
+        <h3>답변 내용</h3>
+        <div th:text="*{answerContent}" style="border: 1px dashed #000; padding: 10px; min-height: 80px; white-space: pre-wrap;">
+            답변 내용이 여기에 들어갑니다.
+        </div>
+    </div>
+
+    <hr>
+
+    <form method="post" action="/cs/admin/answer" enctype="application/x-www-form-urlencoded">
+        <textarea id="content" name="content" maxlength="40000" rows="10" cols="70"></textarea>
+        <button>답변하기</button>
+    </form>
+
+    <div>
+        <button type="button" onclick="location.href='/cs/admin';">
+            [목록으로 돌아가기]
+        </button>
+    </div>
+
+</div>
+
+</body>
+</html>

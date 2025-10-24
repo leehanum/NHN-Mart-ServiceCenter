@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CS 관리자 - 미답변 문의 목록</title>
+</head>
+<body>
+
+<h1>CS 관리자 - 미답변 문의 목록</h1>
+<form method="post" action="/cs/logout" style="display: inline; float: right;">
+    <button type="submit">로그아웃</button>
+</form>
+<hr>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>분류</th>
+        <th>제목</th>
+        <th>작성일시</th>
+        <th>작성자 ID</th>
+        <th>답변</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${inquiries}">
+        <td th:text="${inquiry.id}">1</td>
+        <td th:text="${inquiry.category.description}">불만 접수</td>
+        <td><a th:href="@{|/cs/inquiry/${inquiry.id}|}" th:text="${inquiry.title}">문의 제목</a></td>
+        <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}">2024-10-23 10:00</td>
+        <td th:text="${inquiry.customerId}">lee</td>
+        <td>
+            <a th:href="@{|/cs/admin/answer/${inquiry.id}|}">[답변하기]</a>
+        </td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(inquiries)}">
+        <td colspan="6" style="text-align: center;">
+            현재 답변 대기 중인 문의가 없습니다.
+        </td>
+    </tr>
+    </tbody>
+
+
+</table>
+
+</body>
+</html>

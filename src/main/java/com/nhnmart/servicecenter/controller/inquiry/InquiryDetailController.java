@@ -1,9 +1,8 @@
-package com.nhnmart.servicecenter.controller;
+package com.nhnmart.servicecenter.controller.inquiry;
 
 import com.nhnmart.servicecenter.domain.inquiry.Inquiry;
 import com.nhnmart.servicecenter.respository.InquiryRepository;
 import com.nhnmart.servicecenter.respository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +47,7 @@ public class InquiryDetailController {
         Optional<Inquiry> OptionalInquiry = inquiryRepository.findById(id);
         Inquiry inquiry = OptionalInquiry.get();
         model.addAttribute("inquiry",inquiry);
-        return "CustomerInquiryDetail";
+        return "/customer/CustomerInquiryDetail";
     }
 
     @GetMapping("/download")

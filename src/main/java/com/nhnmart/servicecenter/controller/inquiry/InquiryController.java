@@ -1,4 +1,4 @@
-package com.nhnmart.servicecenter.controller;
+package com.nhnmart.servicecenter.controller.inquiry;
 
 import com.nhnmart.servicecenter.domain.inquiry.Inquiry;
 import com.nhnmart.servicecenter.domain.inquiry.InquiryCategory;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +75,12 @@ public class InquiryController {
         model.addAttribute("categories", InquiryCategory.values());
 
 //        model.addAttribute("categories",)
-        return "CustomerInquiryList";
+        return "/customer/CustomerInquiryList";
     }
 
     @GetMapping("/inquiry")
     public String customerInquiryForm(){
-        return "CostomerInquiryForm";
+        return "/customer/CustomerInquiryForm";
     }
 
     @PostMapping("/inquiry")
@@ -95,6 +97,11 @@ public class InquiryController {
 
         if(userId == null){
             return "redirect:/cs/logout";
+        }
+        Path uploadPath = Paths.get(uploadDir);
+        if (Files.notExists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+            log.info("파일 업로드 디렉토리가 생성되었습니다: {}", uploadDir);
         }
 
         List<String> filePath = new ArrayList<>(); // 서버 저장 경로(Inquiry 객체에 사용)

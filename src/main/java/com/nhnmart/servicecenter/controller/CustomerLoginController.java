@@ -1,5 +1,6 @@
 package com.nhnmart.servicecenter.controller;
 
+import com.nhnmart.servicecenter.domain.user.User;
 import com.nhnmart.servicecenter.exception.LoginFailException;
 import com.nhnmart.servicecenter.respository.UserRepository;
 import jakarta.servlet.http.Cookie;
@@ -36,11 +37,12 @@ public class CustomerLoginController {
 
             if(Objects.nonNull(userId) && userRepository.exists(userId)){ // session으로 가져온 회원 정보 검증
                 model.addAttribute("user", userRepository.getUser(userId));
+
                 return "redirect:/cs";
             }
         }
 
-        return "CustomerLoginForm";
+        return "LoginForm";
     }
 
 
@@ -56,6 +58,11 @@ public class CustomerLoginController {
             session.setAttribute("아무거나","넣어보자");
             Cookie cookie = new Cookie("MYSESSION",session.getId()); // cookie("MYSESSION","abcde1234kljfasdkf") -> 브라우저에 저장
             response.addCookie(cookie);
+
+            User user = userRepository.getUser(id);
+            if(user != null && user.isCsAdmin()){
+                return "redirect:/cs/admin";
+            }
 
             return "redirect:/cs";
         }
@@ -75,6 +82,7 @@ public class CustomerLoginController {
 
         return "redirect:/cs/login";
 
-
     }
+
+
 }
