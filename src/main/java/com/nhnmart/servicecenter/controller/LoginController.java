@@ -19,12 +19,12 @@ import java.util.Objects;
 
 @RequestMapping("/cs")
 @Controller
-public class CustomerLoginController {
+public class LoginController {
 
     private UserRepository userRepository;
 
     @Autowired
-    public CustomerLoginController(UserRepository userRepository) {
+    public LoginController(UserRepository userRepository) {
         this.userRepository = userRepository;
 
     }
@@ -55,7 +55,7 @@ public class CustomerLoginController {
         if(userRepository.matches(id,password)){
             HttpSession session = request.getSession(true);
             session.setAttribute("userId",id); // session(ID="abcde1234kljfasdkf",{studentId="lee"}) -> 서버에 저장됨
-            session.setAttribute("아무거나","넣어보자");
+//            session.setAttribute("아무거나","넣어보자");
             Cookie cookie = new Cookie("MYSESSION",session.getId()); // cookie("MYSESSION","abcde1234kljfasdkf") -> 브라우저에 저장
             response.addCookie(cookie);
 
@@ -67,7 +67,6 @@ public class CustomerLoginController {
             return "redirect:/cs";
         }
         throw new LoginFailException();
-//        return "redirect:/cs/login";
     }
 
     @PostMapping("/logout")

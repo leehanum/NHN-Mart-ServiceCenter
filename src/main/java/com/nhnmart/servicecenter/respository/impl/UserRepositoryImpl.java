@@ -23,10 +23,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
 
-    @Override
-    public Optional<User> findById(String id) {
-        return Optional.empty();
-    }
+//    @Override
+//    public Optional<User> findById(String id) {
+//        return Optional.empty();
+//    }
 
     @Override
     public boolean exists(String id) {

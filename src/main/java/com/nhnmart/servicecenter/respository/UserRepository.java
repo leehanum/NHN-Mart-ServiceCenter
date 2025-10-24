@@ -5,7 +5,7 @@ import com.nhnmart.servicecenter.domain.user.User;
 import java.util.Optional;
 
 public interface UserRepository {
-    Optional<User> findById(String id);
+//    Optional<User> findById(String id);
 
     boolean exists(String id);
 
