@@ -34,8 +34,8 @@ class AdminCheckInterceptorTest {
 
     private AdminCheckInterceptor interceptor;
 
-    private final String ADMIN_ID = "admin";
-    private final String CUSTOMER_ID = "customer";
+    private final String adminId = "admin";
+    private final String customerId = "customer";
 
     @BeforeEach
     void setUp() {
@@ -44,13 +44,18 @@ class AdminCheckInterceptorTest {
 
     @Test
     @DisplayName("관리자 권한이 있으면 true 반환")
-    void preHandle_AdminUser_ShouldReturnTrue() throws Exception {
-        User adminUser = new User(ADMIN_ID, "1234", "관리자", UserType.CS_ADMIN);
+    void preHandle_AdminUser_ShouldReturnTrue() {
+        User adminUser = new User(adminId, "1234", "관리자", UserType.CS_ADMIN);
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute("userId")).thenReturn(ADMIN_ID);
-        when(userRepository.getUser(ADMIN_ID)).thenReturn(adminUser);
+        when(session.getAttribute("userId")).thenReturn(adminId);
+        when(userRepository.getUser(adminId)).thenReturn(adminUser);
 
-        boolean result = interceptor.preHandle(request, response, new Object());
+        boolean result;
+        try {
+            result = interceptor.preHandle(request, response, new Object());
+        } catch (Exception e) {
+            throw new AssertionError("예외가 발생하지 않아야 합니다", e);
+        }
 
         assertThat(result).isTrue();
     }
@@ -58,12 +63,20 @@ class AdminCheckInterceptorTest {
     @Test
     @DisplayName("일반 사용자가 접근하면 AdminAccessDeniedException 발생")
     void preHandle_CustomerUser_ShouldThrowException() {
-        User customerUser = new User(CUSTOMER_ID, "1234", "고객", UserType.CUSTOMER);
+        User customerUser = new User(customerId, "1234", "고객", UserType.CUSTOMER);
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute("userId")).thenReturn(CUSTOMER_ID);
-        when(userRepository.getUser(CUSTOMER_ID)).thenReturn(customerUser);
+        when(session.getAttribute("userId")).thenReturn(customerId);
+        when(userRepository.getUser(customerId)).thenReturn(customerUser);
 
-        assertThatThrownBy(() -> interceptor.preHandle(request, response, new Object()))
+        assertThatThrownBy(() -> {
+            try {
+                interceptor.preHandle(request, response, new Object());
+            } catch (AdminAccessDeniedException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        })
                 .isInstanceOf(AdminAccessDeniedException.class)
                 .hasMessage("관리자 권한이 필요합니다.");
     }
@@ -75,7 +88,15 @@ class AdminCheckInterceptorTest {
         when(session.getAttribute("userId")).thenReturn("unknown");
         when(userRepository.getUser("unknown")).thenReturn(null);
 
-        assertThatThrownBy(() -> interceptor.preHandle(request, response, new Object()))
+        assertThatThrownBy(() -> {
+            try {
+                interceptor.preHandle(request, response, new Object());
+            } catch (AdminAccessDeniedException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        })
                 .isInstanceOf(AdminAccessDeniedException.class)
                 .hasMessage("관리자 권한이 필요합니다.");
     }

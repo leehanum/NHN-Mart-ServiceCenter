@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
-
-public class ValidationFailedExceptionTest {
+class ValidationFailedExceptionTest {
 
     @Test
     @DisplayName("ValidationFailedException 단일 에러 메시지 확인")
